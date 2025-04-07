@@ -63,6 +63,10 @@ func (uc CreateUserUseCase) Execute(ctx context.Context, input CreateUserInput) 
 		time.Now(),
 	)
 
+	if input.Patronymic != nil {
+		user.SetPatronymic(input.Patronymic)
+	}
+
 	_, err = uc.userRepo.Create(ctx, user)
 	if err != nil {
 		return err
