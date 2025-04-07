@@ -1,0 +1,71 @@
+basePath: /
+definitions:
+  server.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  usecase.CreateUserInput:
+    properties:
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API for test task
+  title: API
+  version: "1.0"
+paths:
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Создать пользователя
+      parameters:
+      - description: Create user input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - user
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить пользователя
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Delete user
+      tags:
+      - user
+swagger: "2.0"
