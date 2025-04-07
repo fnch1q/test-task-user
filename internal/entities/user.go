@@ -33,7 +33,7 @@ type UserRepository interface {
 	Update(ctx context.Context, user User) error
 	Delete(ctx context.Context, id uint32) error
 	FindByID(ctx context.Context, id uint32) (User, error)
-	FindAll(ctx context.Context, searchParams UserSearchParams, page, limit int64) ([]User, int64, error)
+	FindAll(ctx context.Context, searchParams UserSearchParams, page, limit int) ([]User, int64, error)
 }
 
 var (

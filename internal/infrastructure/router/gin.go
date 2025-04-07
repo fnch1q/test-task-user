@@ -78,6 +78,9 @@ func (s *Server) Listen() {
 func (s *Server) setupRoutes() {
 	s.router.POST("/user", s.buildCreateUser())
 	s.router.DELETE("/user/:id", s.buildDeleteUser())
+	s.router.PUT("/user/:id", s.buildUpdateUser())
+	s.router.GET("/user/:id", s.buildGetUserByID())
+	s.router.GET("/user", s.buildGetAllUsers())
 	s.router.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 }
 

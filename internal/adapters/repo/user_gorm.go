@@ -109,6 +109,65 @@ func (u UserDB) FindByID(ctx context.Context, id uint32) (entities.User, error) 
 	), nil
 }
 
-func (u UserDB) FindAll(ctx context.Context, searchParams entities.UserSearchParams, page, limit int64) ([]entities.User, int64, error) {
-	return nil, 0, nil
+func (u UserDB) FindAll(ctx context.Context, searchParams entities.UserSearchParams, page, limit int) ([]entities.User, int64, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 10
+	}
+
+	var users []userGORM
+	var count int64
+
+	query := u.dbManager.With(ctx).Table(u.tableName)
+
+	if searchParams.Name != nil {
+		query = query.Where("name LIKE ?", "%"+*searchParams.Name+"%")
+	}
+	if searchParams.Surname != nil {
+		query = query.Where("surname LIKE ?", "%"+*searchParams.Surname+"%")
+	}
+	if searchParams.Patronymic != nil {
+		query = query.Where("patronymic LIKE ?", "%"+*searchParams.Patronymic+"%")
+	}
+	if searchParams.Age != nil {
+		query = query.Where("age = ?", *searchParams.Age)
+	}
+	if searchParams.Gender != nil {
+		query = query.Where("gender = ?", *searchParams.Gender)
+	}
+	if searchParams.Nationality != nil {
+		query = query.Where("nationality = ?", *searchParams.Nationality)
+	}
+
+	if err := query.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if count == 0 {
+		return []entities.User{}, 0, nil
+	}
+
+	offset := (page - 1) * limit
+	if err := query.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+
+	result := make([]entities.User, 0, len(users))
+	for _, user := range users {
+		result = append(result, entities.NewUser(
+			user.ID,
+			user.Name,
+			user.Surname,
+			user.Patronymic,
+			user.Age,
+			user.Gender,
+			user.Nationality,
+			user.CreatedAt,
+			user.UpdatedAt,
+		))
+	}
+
+	return result, count, nil
 }

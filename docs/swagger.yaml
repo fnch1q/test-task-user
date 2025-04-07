@@ -15,6 +15,58 @@ definitions:
       surname:
         type: string
     type: object
+  usecase.FindAllUsersOutput:
+    properties:
+      total_count:
+        type: integer
+      users:
+        items:
+          properties:
+            age:
+              type: integer
+            gender:
+              type: string
+            name:
+              type: string
+            nationality:
+              type: string
+            patronymic:
+              type: string
+            surname:
+              type: string
+          type: object
+        type: array
+    type: object
+  usecase.FindUserByIDOutput:
+    properties:
+      age:
+        type: integer
+      gender:
+        type: string
+      name:
+        type: string
+      nationality:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
+  usecase.UpdateUserInput:
+    properties:
+      age:
+        type: integer
+      gender:
+        type: string
+      name:
+        type: string
+      nationality:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
 info:
   contact: {}
   description: API for test task
@@ -22,6 +74,59 @@ info:
   version: "1.0"
 paths:
   /user:
+    get:
+      consumes:
+      - application/json
+      description: Получить всех пользователей
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: limit
+        type: integer
+      - description: Name
+        in: query
+        name: name
+        type: string
+      - description: Surname
+        in: query
+        name: surname
+        type: string
+      - description: Patronymic
+        in: query
+        name: patronymic
+        type: string
+      - description: Age
+        in: query
+        name: age
+        type: integer
+      - description: Gender
+        in: query
+        name: gender
+        type: string
+      - description: nationality
+        in: query
+        name: nationality
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.FindAllUsersOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Get all users
+      tags:
+      - user
     post:
       consumes:
       - application/json
@@ -66,6 +171,58 @@ paths:
           schema:
             $ref: '#/definitions/server.ErrorResponse'
       summary: Delete user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Получить пользователя по ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.FindUserByIDOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Обновить пользователя
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update user input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.UpdateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrorResponse'
+      summary: Update user
       tags:
       - user
 swagger: "2.0"
